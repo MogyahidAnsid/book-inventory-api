@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\V1;
 
+use App\Http\Controllers\Controller;
 use App\Models\Author;
 use App\Http\Requests\StoreAuthorRequest;
 use App\Http\Requests\UpdateAuthorRequest;
+use App\Http\Resources\AuthorResource;
 
 class AuthorController extends Controller
 {
@@ -13,7 +15,9 @@ class AuthorController extends Controller
      */
     public function index()
     {
-        //
+        // $author = Author::find(3);
+        // return new AuthorResource($author);
+        return AuthorResource::collection(Author::all()->keyBy->id);
     }
 
     /**

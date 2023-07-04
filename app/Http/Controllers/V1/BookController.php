@@ -1,10 +1,17 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\V1;
 
+use App\Filters\ByTitle;
+use App\Filters\IncludeAuthor;
+use App\Http\Controllers\Controller;
 use App\Models\Book;
 use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
+use App\Http\Resources\BookCollection;
+use App\Http\Resources\BookResource;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Pipeline;
 
 class BookController extends Controller
 {
@@ -13,7 +20,17 @@ class BookController extends Controller
      */
     public function index()
     {
-        //
+
+        $result = Pipeline::send(Book::query())
+            ->through(
+                [
+                    ByTitle::class,
+                    IncludeAuthor::class . ':author',
+                ]
+            )
+            ->thenReturn();
+
+        return new BookCollection($result->paginate()->appends(request()->query()));
     }
 
     /**
@@ -37,7 +54,11 @@ class BookController extends Controller
      */
     public function show(Book $book)
     {
-        //
+        $book = Pipeline::send($book->query()->whereId($book->id))
+            ->through([IncludeAuthor::class . ':author'])
+            ->thenReturn();
+
+        return new BookResource($book->first());
     }
 
     /**
