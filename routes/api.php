@@ -22,9 +22,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::prefix('v1')->group(function () {
 
-    // Author Routes
-    Route::apiResource('authors', AuthorController::class);
+    require __DIR__ . '/api/authors.php';
 
-    // Book Routes
-    Route::apiResource('books', BookController::class);
+    require __DIR__ . '/api/books.php';
 });
