@@ -15,17 +15,7 @@ class AuthorController extends Controller
      */
     public function index()
     {
-        // $author = Author::find(3);
-        // return new AuthorResource($author);
         return AuthorResource::collection(Author::all()->keyBy->id);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -33,7 +23,9 @@ class AuthorController extends Controller
      */
     public function store(StoreAuthorRequest $request)
     {
-        //
+        $author = Author::create($request->validated());
+
+        return new AuthorResource($author);
     }
 
     /**
@@ -41,23 +33,17 @@ class AuthorController extends Controller
      */
     public function show(Author $author)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Author $author)
-    {
-        //
+        return new AuthorResource($author);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateAuthorRequest $request, Author $author)
+    public function update(Author $author, StoreAuthorRequest $request)
     {
-        //
+        $data = $author->update($request->all());
+
+        return new AuthorResource($data);
     }
 
     /**
@@ -65,6 +51,8 @@ class AuthorController extends Controller
      */
     public function destroy(Author $author)
     {
-        //
+        $author->delete();
+
+        return response()->json(['message' => 'Author deleted successfully!'], 200);
     }
 }
